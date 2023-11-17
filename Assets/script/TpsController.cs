@@ -23,6 +23,16 @@ public class TpsController : MonoBehaviour
     [SerializeField] LayerMask _groundLayer;
     bool _isGrounded;
 
+    [SerializeField] float _pushForce = 5;
+
+    public GameObject objectToGrab;
+    GameObject _grabedObject;
+    [SerializeField] Transform _intearactionZone;
+
+    [SerializeField] float _throwForce = 10;
+    bool _isAiming = false;
+
+
     Animator _anim;
 
 
@@ -44,17 +54,31 @@ public class TpsController : MonoBehaviour
         if (Input.GetButton("Fire2"))
         {
             AimMovement();
+            _isAiming = true;
         }
         else
         {
             Movement();
+            _isAiming = false;
         }
+
+        if (Input.GetButtonDown("Fire1") && _grabedObject != null && _isAiming)
+        {
+            ThrowObject();
+        }
+
        Jump();   
 
        if(Input.GetKeyDown(KeyCode.K))
        {
             RayTest();
        }
+
+       if (Input.GetKeyDown(KeyCode.E))
+       {
+        GrabObject();
+       }
+
     }
 
    
@@ -153,6 +177,53 @@ public class TpsController : MonoBehaviour
                 caja.TakeDMG();
             }
         }
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Rigidbody body = hit.collider.attachedRigidbody;
+
+        if (body == null || body.isKinematic)
+        {
+            return;
+        }
+
+        if (hit.moveDirection.y < -0.2f)
+        {
+            return;
+        }
+
+        Vector3 pushDirection = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+        body.velocity = pushDirection * _pushForce / body.mass;
+
+
+    }
+
+    void GrabObject ()
+    {
+        if (objectToGrab != null && _grabedObject == null)
+
+        {
+            _grabedObject = objectToGrab;
+            _grabedObject.transform.SetParent(_intearactionZone);
+            _grabedObject.transform.position = _intearactionZone.position;
+            _grabedObject.GetComponent<Rigidbody>().isKinematic = true;
+        }
+        else if(_grabedObject != null)
+        {
+            _grabedObject.GetComponent<Rigidbody>().isKinematic = false;
+            _grabedObject.transform.SetParent(null);
+            _grabedObject = null;
+        }
+    }
+
+    void ThrowObject()
+    {
+        _grabedObject.GetComponent<Rigidbody>().isKinematic = false;
+        _grabedObject.transform.SetParent(null);
+        _grabedObject.GetComponent<Rigidbody>().AddForce(_camera.transform.forward * _throwForce, ForceMode.Impulse);
+        _grabedObject = null;
+
     }
 
 }

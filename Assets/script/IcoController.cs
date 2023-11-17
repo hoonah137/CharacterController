@@ -45,9 +45,9 @@ public class IcoController : MonoBehaviour
         
         Vector3 direction = new Vector3 (_horizontal , 0 , _vertical);
 
-        Ray ray = Camera.main.ScreenPointPointToray(Input.mousePosition);
-        Raycast hit;
-        if(Physics.Raycast(ray, out hit, MathF.Infinity))
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if(Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
             Debug.DrawLine(Camera.main.transform.position, hit.point);
         }
