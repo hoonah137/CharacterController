@@ -42,6 +42,8 @@ public class TpsController : MonoBehaviour
         _controller = GetComponent<CharacterController>();
         _camera = Camera.main.transform;
         _anim = GetComponentInChildren<Animator>();
+
+        Cursor.Visible = false;
         
     }
 
