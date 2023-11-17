@@ -44,7 +44,7 @@ public class TpsController : MonoBehaviour
         _anim = GetComponentInChildren<Animator>();
 
         Cursor.visible = false;
-        
+        Cursor.lockState = CursorLockMode.Locked;        
     }
 
     // Update is called once per frame
